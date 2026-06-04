@@ -1,5 +1,6 @@
 package com.example.store.controller;
 
+import com.example.store.infrastructure.dto.BranchSummaryDto;
 import com.example.store.infrastructure.dto.DailySalesSummaryDto;
 import com.example.store.service.query.DailySalesQueryService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,6 +18,14 @@ public class DailySalesController {
 
     public DailySalesController(DailySalesQueryService queryService) {
         this.queryService = queryService;
+    }
+
+    @GetMapping("/branch-summary")
+    public List<BranchSummaryDto> getBranchSummary(
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
+    ) {
+        return queryService.getBranchSummary(startDate, endDate);
     }
 
     @GetMapping("/daily-summary")
