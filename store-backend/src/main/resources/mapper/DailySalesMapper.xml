@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.store.infrastructure.mapper.DailySalesMapper">
+
+    <select id="findSalesSummary" resultType="com.example.store.infrastructure.dto.DailySalesSummaryDto">
+        SELECT
+            t.sales_date    AS salesDate,
+            a.area_name     AS areaName,
+            b.branch_name   AS branchName,
+            t.budget_amount AS budgetAmount,
+            t.actual_amount AS actualAmount
+        FROM t_daily_sales t
+        INNER JOIN m_branch b ON t.branch_code = b.branch_code
+        INNER JOIN m_area   a ON b.area_code   = a.area_code
+        <where>
+            <if test="startDate != null">
+                AND t.sales_date &gt;= #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND t.sales_date &lt;= #{endDate}
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sort == 'dateAsc'">
+                t.sales_date ASC,  a.area_code ASC, b.branch_code ASC
+            </when>
+            <otherwise>
+                t.sales_date DESC, a.area_code ASC, b.branch_code ASC
+            </otherwise>
+        </choose>
+    </select>
+
+</mapper>
