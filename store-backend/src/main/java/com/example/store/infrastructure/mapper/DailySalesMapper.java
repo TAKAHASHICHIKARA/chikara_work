@@ -1,5 +1,6 @@
 package com.example.store.infrastructure.mapper;
 
+import com.example.store.infrastructure.dto.BranchSummaryDto;
 import com.example.store.infrastructure.dto.DailySalesSummaryDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -13,5 +14,10 @@ public interface DailySalesMapper {
         @Param("startDate") LocalDate startDate,
         @Param("endDate") LocalDate endDate,
         @Param("sort") String sort
+    );
+
+    List<BranchSummaryDto> findBranchSummary(
+        @Param("startDate") LocalDate startDate,
+        @Param("endDate") LocalDate endDate
     );
 }

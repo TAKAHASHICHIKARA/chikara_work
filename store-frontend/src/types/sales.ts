@@ -7,3 +7,10 @@ export interface DailySalesSummary {
   budgetAmount: number
   actualAmount: number
 }
+
+export interface BranchSummary {
+  branchName: string
+  areaName: string
+  totalBudget: number
+  totalActual: number
+}

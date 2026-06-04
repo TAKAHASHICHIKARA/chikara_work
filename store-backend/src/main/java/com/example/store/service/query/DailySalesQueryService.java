@@ -1,5 +1,6 @@
 package com.example.store.service.query;
 
+import com.example.store.infrastructure.dto.BranchSummaryDto;
 import com.example.store.infrastructure.dto.DailySalesSummaryDto;
 import com.example.store.infrastructure.mapper.DailySalesMapper;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,9 @@ public class DailySalesQueryService {
 
     public List<DailySalesSummaryDto> getSalesSummary(LocalDate startDate, LocalDate endDate, String sort) {
         return dailySalesMapper.findSalesSummary(startDate, endDate, sort);
+    }
+
+    public List<BranchSummaryDto> getBranchSummary(LocalDate startDate, LocalDate endDate) {
+        return dailySalesMapper.findBranchSummary(startDate, endDate);
     }
 }

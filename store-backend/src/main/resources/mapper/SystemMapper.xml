@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.store.infrastructure.mapper.SystemMapper">
+
+    <select id="findSystemsByUserId" resultType="com.example.store.infrastructure.dto.SystemDto">
+        SELECT
+            s.system_id     AS systemId,
+            s.system_code   AS systemCode,
+            s.system_name   AS systemName,
+            s.system_name_en AS systemNameEn,
+            s.icon,
+            s.color,
+            s.category,
+            s.sort_order    AS sortOrder,
+            us.role
+        FROM m_system s
+        INNER JOIN m_user_system us ON s.system_id = us.system_id
+        WHERE us.user_id = #{userId}
+        ORDER BY s.sort_order
+    </select>
+
+</mapper>

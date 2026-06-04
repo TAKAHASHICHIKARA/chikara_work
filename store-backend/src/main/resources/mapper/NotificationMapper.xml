@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.store.infrastructure.mapper.NotificationMapper">
+
+    <resultMap id="notifMap" type="com.example.store.infrastructure.dto.NotificationDto">
+        <id     property="notificationId" column="notification_id"/>
+        <result property="userId"         column="user_id"/>
+        <result property="title"          column="title"/>
+        <result property="body"           column="body"/>
+        <result property="read"           column="is_read"    javaType="boolean" jdbcType="NUMERIC"/>
+        <result property="createdAt"      column="created_at"/>
+    </resultMap>
+
+    <select id="findByUserId" resultMap="notifMap">
+        SELECT notification_id, user_id, title, body, is_read, created_at
+        FROM t_notification
+        WHERE user_id = #{userId}
+        ORDER BY created_at DESC
+    </select>
+
+    <update id="markAsRead">
+        UPDATE t_notification
+        SET is_read = 1
+        WHERE notification_id = #{notificationId}
+          AND user_id = #{userId}
+    </update>
+
+    <update id="markAllAsRead">
+        UPDATE t_notification
+        SET is_read = 1
+        WHERE user_id = #{userId}
+          AND is_read = 0
+    </update>
+
+</mapper>
