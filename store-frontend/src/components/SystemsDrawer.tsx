@@ -2,17 +2,12 @@ import { useEffect, useState } from 'react'
 import type { SystemItem } from '../types/system'
 import { fetchSystems } from '../api/systemsApi'
 import type { Lang } from '../types/user'
+import { useT } from '../i18n'
 
 const ROLE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
   admin:  { bg: '#fef3c7', text: '#92400e', border: '#f59e0b' },
   user:   { bg: '#dbeafe', text: '#1e40af', border: '#3b82f6' },
   viewer: { bg: '#f3f4f6', text: '#374151', border: '#9ca3af' },
-}
-
-const ROLE_LABEL: Record<string, Record<Lang, string>> = {
-  admin:  { ja: '管理', en: 'Admin', zh: '管理员', ko: '관리자', th: 'ผู้ดูแล' },
-  user:   { ja: '一般', en: 'User',  zh: '普通用户', ko: '일반', th: 'ผู้ใช้' },
-  viewer: { ja: '閲覧', en: 'Viewer', zh: '查看者', ko: '열람', th: 'ผู้ดู' },
 }
 
 interface Props {
@@ -23,13 +18,13 @@ interface Props {
 }
 
 export function SystemsDrawer({ open, onClose, userId, lang }: Props) {
+  const t = useT(lang)
   const [systems, setSystems] = useState<SystemItem[]>([])
 
   useEffect(() => {
     if (userId) fetchSystems(userId).then(setSystems).catch(() => {})
   }, [userId])
 
-  // Group by category
   const grouped = systems.reduce<Record<string, SystemItem[]>>((acc, s) => {
     if (!acc[s.category]) acc[s.category] = []
     acc[s.category].push(s)
@@ -38,24 +33,17 @@ export function SystemsDrawer({ open, onClose, userId, lang }: Props) {
 
   return (
     <>
-      {/* Overlay */}
-      <div
-        onClick={onClose}
-        style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 150, opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none', transition: 'opacity 0.25s' }}
-      />
+      <div onClick={onClose} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 150, opacity: open ? 1 : 0, pointerEvents: open ? 'auto' : 'none', transition: 'opacity 0.25s' }} />
 
-      {/* Drawer */}
       <div style={{ position: 'fixed', top: 0, left: 0, bottom: 0, width: 320, background: '#0f172a', borderRight: '1px solid rgba(255,255,255,0.08)', zIndex: 160, transform: open ? 'translateX(0)' : 'translateX(-100%)', transition: 'transform 0.28s cubic-bezier(0.4,0,0.2,1)', overflowY: 'auto' }}>
-        {/* Header */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 20px', borderBottom: '1px solid rgba(255,255,255,0.07)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#6366f1,#0ea5e9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>🏪</div>
-            <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: 15 }}>システム一覧</span>
+            <span style={{ color: '#f1f5f9', fontWeight: 700, fontSize: 15 }}>{t.systems}</span>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: 22, cursor: 'pointer', lineHeight: 1 }}>✕</button>
         </div>
 
-        {/* Systems */}
         <div style={{ padding: '16px 16px 32px' }}>
           {Object.entries(grouped).map(([category, items]) => (
             <div key={category} style={{ marginBottom: 24 }}>
@@ -65,11 +53,12 @@ export function SystemsDrawer({ open, onClose, userId, lang }: Props) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {items.map(s => {
                   const rc = ROLE_COLORS[s.role] ?? ROLE_COLORS.viewer
-                  const roleLabel = ROLE_LABEL[s.role]?.[lang] ?? s.role
+                  const roleKey = `role_${s.role}` as keyof typeof t
+                  const roleLabel = t[roleKey] ?? s.role
                   return (
                     <button
                       key={s.systemId}
-                      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', cursor: 'pointer', textAlign: 'left', transition: 'background 0.15s', width: '100%' }}
+                      style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 12px', borderRadius: 12, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', cursor: 'pointer', textAlign: 'left', width: '100%', transition: 'background 0.15s' }}
                       onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.08)')}
                       onMouseLeave={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.04)')}
                     >
